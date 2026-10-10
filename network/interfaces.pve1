@@ -1,0 +1,23 @@
+# /etc/network/interfaces on pve1
+# vmbr0  : bridge on the bridged adapter, used by the cluster (Corosync) and the VMs
+# enp0s8 : host-only adapter, stable address for the web GUI from the host
+auto lo
+iface lo inet loopback
+
+iface nic0 inet manual
+
+auto vmbr0
+iface vmbr0 inet static
+	address 192.168.100.2/24
+	gateway 192.168.100.1
+	bridge-ports nic0
+	bridge-stp off
+	bridge-fd 0
+	dns-nameservers 8.8.8.8 1.1.1.1
+
+auto enp0s8
+iface enp0s8 inet static
+	address 192.168.56.21
+	netmask 255.255.255.0
+
+source /etc/network/interfaces.d/*

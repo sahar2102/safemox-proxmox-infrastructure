@@ -1,0 +1,20 @@
+# -*- mode: ruby -*-
+# First version: full Debian 12 VM with the libvirt provider and shell provisioning.
+# Replaced by the Docker provider (see Vagrantfile) because of nested virtualisation limits.
+Vagrant.configure("2") do |config|
+  config.vm.box      = "debian/bookworm64"
+  config.vm.hostname = "proxmox-dev"
+  config.vm.network  "private_network", ip: "192.168.100.22"
+  config.vm.network  "forwarded_port", guest: 22, host: 2222, auto_correct: true
+
+  config.vm.provider "libvirt" do |lv|
+    lv.memory = "1024"
+    lv.cpus   = 1
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update -y
+    apt-get install -y curl wget htop net-tools vim
+    echo "Provisionnement Shell termine avec succes"
+  SHELL
+end

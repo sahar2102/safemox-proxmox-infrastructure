@@ -1,0 +1,15 @@
+# Standardised test environment provisioned by Vagrant with the Docker provider
+# (nested virtualisation inside the Proxmox VM did not allow a full VM box).
+Vagrant.configure("2") do |config|
+  config.vm.network "forwarded_port", guest: 22, host: 2222, auto_correct: true
+
+  config.vm.provider "docker" do |d|
+    d.image           = "ubuntu:20.04"
+    d.remains_running = true
+    d.has_ssh         = false
+    d.force_host_vm   = false
+    d.cmd = ["/bin/bash", "-c",
+             "apt-get update -y && apt-get install -y curl wget htop net-tools vim && " \
+             "echo 'Provisionnement termine avec succes' && tail -f /dev/null"]
+  end
+end

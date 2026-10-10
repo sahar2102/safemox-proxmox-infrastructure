@@ -1,0 +1,38 @@
+---
+# Post-installation configuration of all Proxmox VE nodes
+# Run: ansible-playbook -i hosts.ini deploy-proxmox.yml -v
+- name: Configuration automatisée des noeuds Proxmox VE
+  hosts: proxmox_nodes
+  become: yes
+  vars:
+    timezone: Africa/Tunis
+    packages:
+      - htop
+      - curl
+      - wget
+      - net-tools
+      - vim
+
+  tasks:
+    - name: Mise a jour de la liste des paquets
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Mise a jour de tous les paquets installes
+      apt:
+        upgrade: dist
+        autoremove: yes
+
+    - name: Installation des outils d'administration
+      apt:
+        name: "{{ packages }}"
+        state: present
+
+    - name: Configuration du fuseau horaire
+      timezone:
+        name: "{{ timezone }}"
+
+    - name: Message de confirmation
+      debug:
+        msg: "Configuration terminee sur {{ inventory_hostname }}"
